@@ -1,12 +1,6 @@
 'use client'
 import { useEffect, useRef } from 'react'
-
-const metrics = [
-  { label: 'Среднее увеличение выручки', desc: 'За первые 12 месяцев после внедрения стратегии', value: '+187%' },
-  { label: 'Снижение операционных издержек', desc: 'За счёт автоматизации и оптимизации процессов', value: '−34%' },
-  { label: 'Возврат инвестиций (ROI)', desc: 'Средний показатель по реализованным проектам', value: '×4.2' },
-  { label: 'Срок окупаемости', desc: 'От старта работы до положительного денежного потока', value: '3–6 мес' },
-]
+import { useLang } from '@/context/LanguageContext'
 
 const bars = [
   { label: 'Q1', h: '22%', val: '1.0×' },
@@ -17,13 +11,8 @@ const bars = [
   { label: 'Q6', h: '92%', val: '3.2×' },
 ]
 
-const examples = [
-  { label: 'Кейс: автоматизация', input: 'Инвестиция в разработку: 800 000 ₽', arrow: '↓ экономия на 3 штатных единицах', result: '+3.6M ₽/год' },
-  { label: 'Кейс: стратегия выхода', input: '6 недель аналитики и планирования', arrow: '↓ выход на 2 новых рынка', result: '+$420K выручка' },
-  { label: 'Кейс: финансовая модель', input: 'Убыточная операционная модель', arrow: '↓ реструктуризация юнит-экономики', result: 'EBITDA +34%' },
-]
-
 export default function Roi() {
+  const { t } = useLang()
   const ref = useRef<HTMLElement>(null)
   const barsRef = useRef<(HTMLDivElement | null)[]>([])
 
@@ -57,19 +46,19 @@ export default function Roi() {
       <div className="roi-bg-glow" />
       <div className="container">
         <div className="roi-header">
-          <p className="section-label reveal">Экономика</p>
+          <p className="section-label reveal">{t.roi.sectionLabel}</p>
           <h2 className="roi-h2 reveal" style={{ transitionDelay: '0.1s' }}>
-            Как мы зарабатываем<br />вам деньги
+            {t.roi.h2.split('\n').map((line, i, arr) => (
+              <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+            ))}
           </h2>
-          <p className="roi-sub reveal" style={{ transitionDelay: '0.2s' }}>
-            Каждое решение обосновано цифрами. Вот как выглядит типичный ROI от работы с нами.
-          </p>
+          <p className="roi-sub reveal" style={{ transitionDelay: '0.2s' }}>{t.roi.sub}</p>
         </div>
 
         <div className="roi-grid">
           <div className="roi-metrics reveal-left">
-            {metrics.map(m => (
-              <div className="roi-metric" key={m.label}>
+            {t.roi.metrics.map((m, i) => (
+              <div className="roi-metric" key={i}>
                 <div>
                   <p className="roi-metric-label">{m.label}</p>
                   <p className="roi-metric-desc">{m.desc}</p>
@@ -80,8 +69,8 @@ export default function Roi() {
           </div>
 
           <div className="roi-chart-wrap reveal-right">
-            <p className="chart-eyebrow">Динамика роста выручки</p>
-            <p className="chart-title-text">Среднее по портфелю клиентов</p>
+            <p className="chart-eyebrow">{t.roi.chartEyebrow}</p>
+            <p className="chart-title-text">{t.roi.chartTitle}</p>
             <div className="chart-bars">
               {bars.map((b, i) => (
                 <div className="bar-wrap" key={b.label}>
@@ -100,8 +89,8 @@ export default function Roi() {
         </div>
 
         <div className="roi-examples">
-          {examples.map((ex, i) => (
-            <div className="roi-example reveal" key={ex.label} style={{ transitionDelay: `${i * 0.12}s` }}>
+          {t.roi.examples.map((ex, i) => (
+            <div className="roi-example reveal" key={i} style={{ transitionDelay: `${i * 0.12}s` }}>
               <p className="roi-ex-label">{ex.label}</p>
               <p className="roi-ex-input">{ex.input}</p>
               <p className="roi-ex-arrow">{ex.arrow}</p>

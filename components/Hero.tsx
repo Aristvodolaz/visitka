@@ -1,10 +1,10 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { useLang } from '@/context/LanguageContext'
 
 function Counter({ target, decimal, suffix = '' }: { target: number; decimal?: boolean; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null)
   const [val, setVal] = useState('0')
-
   useEffect(() => {
     const el = ref.current
     if (!el) return
@@ -25,23 +25,21 @@ function Counter({ target, decimal, suffix = '' }: { target: number; decimal?: b
     obs.observe(el)
     return () => obs.disconnect()
   }, [target, decimal])
-
   return <span ref={ref}>{val}{suffix}</span>
 }
 
 export default function Hero() {
+  const { t } = useLang()
   const glowRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    // scroll reveals
     const els = sectionRef.current?.querySelectorAll<HTMLElement>('.reveal')
     const obs = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target) } })
     }, { threshold: 0.1 })
     els?.forEach(el => obs.observe(el))
 
-    // cursor glow
     const glow = glowRef.current
     if (!glow) return
     const handleMove = (e: MouseEvent) => {
@@ -61,38 +59,39 @@ export default function Hero() {
         <div className="container">
           <div className="hero-content">
             <div className="hero-tag reveal">
-              <span className="tag">Масштабирование под ключ</span>
+              <span className="tag">{t.hero.tag}</span>
             </div>
             <h1 className="hero-h1 reveal" style={{ transitionDelay: '0.1s' }}>
-              Мы строим<br />
-              системы,<br />
-              которые <em>зарабатывают.</em>
+              {t.hero.h1[0]}<br />
+              {t.hero.h1[1]}<br />
+              {t.hero.h1[2]} <em>{t.hero.h1em}</em>
             </h1>
             <p className="hero-sub reveal" style={{ transitionDelay: '0.2s' }}>
-              Стратегия. Разработка. Аналитика.<br />
-              Один партнёр — полный цикл роста вашего бизнеса.
+              {t.hero.sub.split('\n').map((line, i) => (
+                <span key={i}>{line}{i < t.hero.sub.split('\n').length - 1 && <br />}</span>
+              ))}
             </p>
             <div className="hero-actions reveal" style={{ transitionDelay: '0.3s' }}>
               <a href="#cta" className="btn btn-primary">
-                Обсудить рост бизнеса
+                {t.hero.cta1}
                 <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M1 7h12M8 2l5 5-5 5" />
                 </svg>
               </a>
-              <a href="#cases" className="btn btn-ghost">Смотреть кейсы →</a>
+              <a href="#cases" className="btn btn-ghost">{t.hero.cta2}</a>
             </div>
             <div className="hero-stats reveal" style={{ transitionDelay: '0.4s' }}>
               <div className="hero-stat">
                 <span className="stat-num"><span className="accent"><Counter target={47} /></span></span>
-                <div className="stat-label">проектов реализовано</div>
+                <div className="stat-label">{t.hero.stats[0].label}</div>
               </div>
               <div className="hero-stat">
                 <span className="stat-num">×<span className="accent"><Counter target={32} decimal /></span></span>
-                <div className="stat-label">средний рост выручки</div>
+                <div className="stat-label">{t.hero.stats[1].label}</div>
               </div>
               <div className="hero-stat">
                 <span className="stat-num">$<span className="accent"><Counter target={28} suffix="M+" /></span></span>
-                <div className="stat-label">привлечено клиентам</div>
+                <div className="stat-label">{t.hero.stats[2].label}</div>
               </div>
             </div>
           </div>

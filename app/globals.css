@@ -305,6 +305,105 @@ hr.divider { border: none; border-top: 1px solid var(--border); }
 }
 .nav-phone:hover { color: var(--gold); }
 .nav-phone svg { width: 11px; height: 11px; }
+/* ─── LANG SWITCHER — sliding pill ──────────────────────────────────────── */
+.lang-switcher {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px;
+  flex-shrink: 0;
+  gap: 0;
+}
+
+/* The animated sliding indicator */
+.lang-slide {
+  position: absolute;
+  inset: 3px auto 3px 3px;
+  width: calc(50% - 3px);
+  background: linear-gradient(135deg, rgba(201,169,110,0.18) 0%, rgba(201,169,110,0.08) 100%);
+  border: 1px solid rgba(201,169,110,0.35);
+  border-radius: 4px;
+  box-shadow: 0 0 14px rgba(201,169,110,0.10), inset 0 1px 0 rgba(201,169,110,0.15);
+  transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+  pointer-events: none;
+}
+.lang-slide--en { transform: translateX(100%); }
+
+.lang-btn {
+  position: relative;
+  z-index: 1;
+  padding: 5px 14px;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.25s, transform 0.15s;
+  line-height: 1;
+  min-width: 40px;
+  text-align: center;
+}
+.lang-btn:hover:not(.active) { color: var(--text-2); }
+.lang-btn.active { color: var(--gold); }
+.lang-btn:active { transform: scale(0.92); }
+
+/* ─── PAGE LANGUAGE TRANSITION ───────────────────────────────────────────── */
+.lang-root {
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+.lang-root.lang-fading {
+  opacity: 0;
+  filter: blur(2px);
+}
+
+/* ─── TYPOGRAPHY TWEAKS PER LANGUAGE SCRIPT ──────────────────────────────── */
+
+/* Latin script: tighter tracking on large serifs, wider body */
+:lang(en) .hero-h1 { letter-spacing: -0.03em; }
+:lang(en) .philosophy-h2 { letter-spacing: -0.025em; }
+:lang(en) .services-h2 { letter-spacing: -0.02em; }
+:lang(en) .process-h2 { letter-spacing: -0.02em; }
+:lang(en) .cases-h2 { letter-spacing: -0.02em; }
+:lang(en) .forwhom-h2 { letter-spacing: -0.02em; }
+:lang(en) .roi-h2 { letter-spacing: -0.025em; }
+:lang(en) .cta-h2 { letter-spacing: -0.025em; }
+:lang(en) .service-title,
+:lang(en) .step-title,
+:lang(en) .case-title,
+:lang(en) .pillar h3,
+:lang(en) .adv-title,
+:lang(en) .whom-title { letter-spacing: -0.01em; }
+
+/* Cyrillic: slightly more generous tracking for readability */
+:lang(ru) .hero-h1 { letter-spacing: -0.015em; }
+:lang(ru) .hero-sub { letter-spacing: 0.005em; }
+:lang(ru) .nav-links a { letter-spacing: 0.03em; }
+
+/* Body text rhythm per language */
+:lang(en) .hero-sub,
+:lang(en) .service-desc,
+:lang(en) .step-desc,
+:lang(en) .case-desc,
+:lang(en) .pillar p,
+:lang(en) .adv-desc,
+:lang(en) .whom-desc { line-height: 1.65; }
+
+:lang(ru) .hero-sub,
+:lang(ru) .service-desc,
+:lang(ru) .step-desc,
+:lang(ru) .case-desc { line-height: 1.75; }
+
+/* Section labels */
+:lang(en) .section-label { letter-spacing: 0.25em; font-size: 10.5px; }
+
+/* EN serif headings benefit from italic contrast */
+:lang(en) .hero-h1 em { font-style: italic; font-weight: 300; }
+
 .burger {
   display: none;
   flex-direction: column;

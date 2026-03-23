@@ -1,7 +1,9 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
+import { useLang } from '@/context/LanguageContext'
 
 export default function Cta() {
+  const { t } = useLang()
   const [submitted, setSubmitted] = useState(false)
   const ref = useRef<HTMLElement>(null)
 
@@ -14,32 +16,33 @@ export default function Cta() {
     return () => obs.disconnect()
   }, [])
 
+  // Reset form when language changes
+  useEffect(() => { setSubmitted(false) }, [t])
+
   return (
     <section id="cta" ref={ref}>
       <div className="container">
         <div className="cta-inner reveal">
           <div className="cta-glow" />
           <div>
-            <p className="section-label" style={{ marginBottom: '24px' }}>Начать</p>
+            <p className="section-label" style={{ marginBottom: '24px' }}>{t.cta.sectionLabel}</p>
             <h2 className="cta-h2">
-              Готовы к<br /><em>кратному росту?</em>
+              {t.cta.h2.split('\n').map((line, i, arr) => (
+                <span key={i}>{i === 1 ? <em>{line}</em> : line}{i < arr.length - 1 && <br />}</span>
+              ))}
             </h2>
-            <p className="cta-sub" style={{ marginTop: '20px' }}>
-              Расскажите о задаче. Первая встреча — бесплатно.
-              Без презентаций ни о чём — только предметный разговор о вашем бизнесе.
-            </p>
+            <p className="cta-sub" style={{ marginTop: '20px' }}>{t.cta.sub}</p>
             <div className="cta-checks">
-              {['Ответим в течение 4 часов в рабочий день', 'Первый разбор задачи — бесплатно', 'NDA подписываем на старте'].map(check => (
+              {t.cta.checks.map(check => (
                 <div className="cta-check" key={check}>
                   <span className="cta-check-icon">✓</span>
                   {check}
                 </div>
               ))}
             </div>
-
             <div className="cta-direct" style={{ marginTop: '32px', paddingTop: '28px', borderTop: '1px solid var(--border)' }}>
               <p style={{ fontFamily: 'var(--ff-mono)', fontSize: '9px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: '14px' }}>
-                Или напишите напрямую
+                {t.cta.directLabel}
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <a href="tel:+79199031597" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: 'var(--text-2)', textDecoration: 'none', fontFamily: 'var(--ff-mono)', transition: 'color 0.2s' }}
@@ -56,8 +59,7 @@ export default function Cta() {
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-2)')}
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <rect x="2" y="4" width="20" height="16" rx="2"/>
-                    <path d="M2 7l10 7 10-7"/>
+                    <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/>
                   </svg>
                   otsnata82@gmail.com
                 </a>
@@ -69,28 +71,23 @@ export default function Cta() {
             {!submitted ? (
               <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true) }}>
                 <div className="form-row">
-                  <input className="form-input" type="text" placeholder="Ваше имя" required />
-                  <input className="form-input" type="tel" placeholder="Телефон или Telegram" />
-                  <input className="form-input" type="email" placeholder="Email" required />
+                  <input className="form-input" type="text" placeholder={t.cta.form.name} required />
+                  <input className="form-input" type="tel" placeholder={t.cta.form.phone} />
+                  <input className="form-input" type="email" placeholder={t.cta.form.email} required />
                   <select className="form-select" defaultValue="">
-                    <option value="" disabled>Направление запроса</option>
-                    <option>Стратегия и рост бизнеса</option>
-                    <option>IT-разработка и автоматизация</option>
-                    <option>Бизнес-аналитика и финансы</option>
-                    <option>Комплексный проект</option>
+                    <option value="" disabled>{t.cta.form.selectPlaceholder}</option>
+                    {t.cta.form.options.map(o => <option key={o}>{o}</option>)}
                   </select>
-                  <textarea className="form-textarea" rows={3} placeholder="Коротко о задаче (необязательно)" />
-                  <button type="submit" className="btn-submit">Отправить запрос →</button>
-                  <p className="form-note">
-                    Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности.
-                  </p>
+                  <textarea className="form-textarea" rows={3} placeholder={t.cta.form.textarea} />
+                  <button type="submit" className="btn-submit">{t.cta.form.submit}</button>
+                  <p className="form-note">{t.cta.form.note}</p>
                 </div>
               </form>
             ) : (
               <div className="form-success">
-                <p className="form-success-tag">// ЗАПРОС ОТПРАВЛЕН</p>
-                <p className="form-success-title">Получили.</p>
-                <p className="form-success-sub">Свяжемся в течение 4 часов.</p>
+                <p className="form-success-tag">{t.cta.success.tag}</p>
+                <p className="form-success-title">{t.cta.success.title}</p>
+                <p className="form-success-sub">{t.cta.success.sub}</p>
               </div>
             )}
           </div>

@@ -1,14 +1,9 @@
 'use client'
 import { useEffect, useRef } from 'react'
-
-const whom = [
-  { icon: '◈', title: 'Фаундеры', desc: 'Стартапы и растущие компании, которым нужна стратегия и технологии для кратного роста без раздувания штата.' },
-  { icon: '◇', title: 'Собственники', desc: 'Действующий бизнес с выручкой от 30M ₽, который упёрся в потолок и ищет системный выход на следующий уровень.' },
-  { icon: '△', title: 'Инвесторы', desc: 'Портфельные компании, которым нужна операционная экспертиза для повышения стоимости актива перед выходом.' },
-  { icon: '○', title: 'Топ-менеджеры', desc: 'Руководители, отвечающие за трансформацию или цифровизацию. Ищут надёжного партнёра, а не команду исполнителей.' },
-]
+import { useLang } from '@/context/LanguageContext'
 
 export default function ForWhom() {
+  const { t } = useLang()
   const ref = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -23,16 +18,16 @@ export default function ForWhom() {
   return (
     <section id="forwhom" ref={ref}>
       <div className="container">
-        <p className="section-label reveal">Аудитория</p>
+        <p className="section-label reveal">{t.forWhom.sectionLabel}</p>
         <h2 className="forwhom-h2 reveal" style={{ transitionDelay: '0.1s' }}>
-          Работаем с теми,<br />кто думает в масштабе.
+          {t.forWhom.h2.split('\n').map((line, i, arr) => (
+            <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+          ))}
         </h2>
-        <p className="forwhom-sub reveal" style={{ transitionDelay: '0.2s' }}>
-          Нам интересны задачи, где ставки высоки и где нужен партнёр, а не подрядчик.
-        </p>
+        <p className="forwhom-sub reveal" style={{ transitionDelay: '0.2s' }}>{t.forWhom.sub}</p>
         <div className="whom-grid">
-          {whom.map((w, i) => (
-            <div className="whom-card reveal" key={w.title} style={{ transitionDelay: `${i * 0.1}s` }}>
+          {t.forWhom.items.map((w, i) => (
+            <div className="whom-card reveal" key={i} style={{ transitionDelay: `${i * 0.1}s` }}>
               <span className="whom-icon">{w.icon}</span>
               <h3 className="whom-title">{w.title}</h3>
               <p className="whom-desc">{w.desc}</p>

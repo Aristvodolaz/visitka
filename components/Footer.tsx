@@ -1,4 +1,8 @@
+'use client'
+import { useLang } from '@/context/LanguageContext'
+
 export default function Footer() {
+  const { t } = useLang()
   const year = new Date().getFullYear()
 
   return (
@@ -7,48 +11,39 @@ export default function Footer() {
         <div className="footer-inner">
           <div>
             <a href="#" className="footer-logo">SCALE<span>X</span></a>
-            <p className="footer-desc">
-              Масштабирование бизнеса под ключ. Стратегия, разработка и аналитика — один партнёр, полный цикл роста.
-            </p>
+            <p className="footer-desc">{t.footer.desc}</p>
           </div>
-
           <div>
-            <p className="footer-col-title">Услуги</p>
+            <p className="footer-col-title">{t.footer.colServices}</p>
             <ul className="footer-links">
-              <li><a href="#services">Стратегия и партнёрства</a></li>
-              <li><a href="#services">IT-разработка</a></li>
-              <li><a href="#services">Бизнес-аналитика</a></li>
-              <li><a href="#process">Как мы работаем</a></li>
+              {t.footer.serviceLinks.map(l => (
+                <li key={l.label}><a href={l.href}>{l.label}</a></li>
+              ))}
             </ul>
           </div>
-
           <div>
-            <p className="footer-col-title">Компания</p>
+            <p className="footer-col-title">{t.footer.colCompany}</p>
             <ul className="footer-links">
-              <li><a href="#philosophy">О нас</a></li>
-              <li><a href="#cases">Кейсы</a></li>
-              <li><a href="#forwhom">Для кого</a></li>
-              <li><a href="#roi">Результаты</a></li>
-              <li><a href="#cta">Связаться</a></li>
+              {t.footer.companyLinks.map(l => (
+                <li key={l.label}><a href={l.href}>{l.label}</a></li>
+              ))}
             </ul>
           </div>
-
           <div>
-            <p className="footer-col-title">Контакты</p>
+            <p className="footer-col-title">{t.footer.colContacts}</p>
             <div className="footer-contact">
               <a href="tel:+79199031597">+7 919 903-15-97</a>
               <a href="mailto:otsnata82@gmail.com">otsnata82@gmail.com</a>
-              <span>Россия</span>
+              <span>Russia</span>
             </div>
           </div>
         </div>
-
         <div className="footer-bottom">
-          <p className="footer-copy">© {year} SCALEX. Все права защищены.</p>
+          <p className="footer-copy">© {year} SCALEX. {t.footer.rights}</p>
           <div className="footer-socials">
-            <a href="tel:+79199031597">Позвонить</a>
-            <a href="mailto:otsnata82@gmail.com">Написать</a>
-            <a href="#cta">Заявка</a>
+            <a href="tel:+79199031597">{t.footer.call}</a>
+            <a href="mailto:otsnata82@gmail.com">{t.footer.write}</a>
+            <a href="#cta">{t.footer.request}</a>
           </div>
         </div>
       </div>
