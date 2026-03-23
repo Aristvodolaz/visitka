@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCALEX — Масштабирование бизнеса под ключ</title>
+<meta name="description" content="Стратегия. Разработка. Аналитика. Один партнёр — полный цикл роста вашего бизнеса.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ─── RESET & ROOT ─────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #050506;
+    --surface: #0D0D10;
+    --surface-2: #141418;
+    --border: rgba(255,255,255,0.06);
+    --text: #EDE9E0;
+    --text-2: #7A7A84;
+    --text-3: #3D3D44;
+    --gold: #C9A96E;
+    --gold-dim: rgba(201,169,110,0.12);
+    --blue: #3B82F6;
+    --blue-dim: rgba(59,130,246,0.1);
+    --green: #22C55E;
+    --ff-serif: 'Cormorant Garamond', Georgia, serif;
+    --ff-sans: 'DM Sans', system-ui, sans-serif;
+    --ff-mono: 'JetBrains Mono', monospace;
+    --nav-h: 68px;
+    --section-pad: clamp(80px, 10vw, 140px);
+    --max-w: 1200px;
+    --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--ff-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── GRAIN OVERLAY ──────────────────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.028;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ─── CURSOR GLOW ────────────────────────────────────────────────── */
+  #cursor-glow {
+    position: fixed;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s;
+    will-change: transform;
+  }
+
+  /* ─── SCROLL ANIMATIONS ──────────────────────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-32px);
+    transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  }
+  .reveal-left.visible { opacity: 1; transform: none; }
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(32px);
+    transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  }
+  .reveal-right.visible { opacity: 1; transform: none; }
+  [data-delay="1"] { transition-delay: 0.1s; }
+  [data-delay="2"] { transition-delay: 0.2s; }
+  [data-delay="3"] { transition-delay: 0.3s; }
+  [data-delay="4"] { transition-delay: 0.4s; }
+  [data-delay="5"] { transition-delay: 0.5s; }
+
+  /* ─── UTILITIES ──────────────────────────────────────────────────── */
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
+  .eyebrow {
+    font-family: var(--ff-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .section-label {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 48px;
+  }
+  .section-label::before { content: '// '; }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: var(--gold-dim);
+    border: 1px solid rgba(201,169,110,0.2);
+    border-radius: 100px;
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .tag::before { content: '●'; font-size: 6px; }
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  /* ─── BUTTONS ────────────────────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 4px;
+    font-family: var(--ff-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 0.25s var(--ease);
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: #0A0A0A;
+  }
+  .btn-primary:hover {
+    background: #D4B57C;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(201,169,110,0.25);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-2);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover {
+    border-color: rgba(255,255,255,0.2);
+    color: var(--text);
+    transform: translateY(-1px);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid rgba(201,169,110,0.35);
+  }
+  .btn-outline:hover {
+    background: var(--gold-dim);
+    transform: translateY(-1px);
+  }
+  .btn svg { width: 14px; height: 14px; }
+
+  /* ─── NAVIGATION ─────────────────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--nav-h);
+    z-index: 100;
+    border-bottom: 1px solid transparent;
+    transition: background 0.4s, border-color 0.4s, backdrop-filter 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(5,5,6,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-color: var(--border);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+  }
+  .nav-logo {
+    font-family: var(--ff-mono);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-2);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta { margin-left: 16px; }
+  .burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .burger span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: var(--text);
+    transition: all 0.3s;
+  }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    top: var(--nav-h);
+    background: var(--bg);
+    z-index: 99;
+    padding: 40px clamp(20px, 4vw, 48px);
+    flex-direction: column;
+    gap: 32px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: var(--ff-serif);
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--text);
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+  }
+  .mobile-menu a:hover { opacity: 1; }
+
+  /* ─── HERO ───────────────────────────────────────────────────────── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-top: var(--nav-h);
+    padding-bottom: clamp(60px, 8vw, 100px);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 80%);
+    opacity: 0.5;
+  }
+  .hero-glow {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(201,169,110,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 2; }
+  .hero-tag { margin-bottom: 32px; }
+  .hero-h1 {
+    font-family: var(--ff-serif);
+    font-size: clamp(52px, 8.5vw, 120px);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 32px;
+  }
+  .hero-h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-sub {
+    font-size: clamp(15px, 1.8vw, 18px);
+    color: var(--text-2);
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 44px;
+  }
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 72px;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    width: fit-content;
+  }
+  .hero-stat {
+    padding: 20px 32px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .hero-stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: var(--ff-mono);
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .stat-num .accent { color: var(--gold); }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.05em;
+  }
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 32px;
+    right: clamp(20px, 4vw, 48px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--text-3);
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-line::after {
+    content: '';
+    position: absolute;
+    left: -100%;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--gold);
+    animation: slide-line 2s ease-in-out infinite;
+  }
+  @keyframes slide-line {
+    0% { left: -100%; }
+    50% { left: 0%; }
+    100% { left: 100%; }
+  }
+
+  /* ─── SECTION BASE ───────────────────────────────────────────────── */
+  section { padding: var(--section-pad) 0; }
+
+  /* ─── PHILOSOPHY ─────────────────────────────────────────────────── */
+  #philosophy { background: var(--surface); border-top: 1px solid var(--border); }
+  .philosophy-header { margin-bottom: 64px; }
+  .philosophy-h2 {
+    font-family: var(--ff-serif);
+    font-size: clamp(30px, 4vw, 52px);
+    font-weight: 300;
+    line-height: 1.2;
+    max-width: 700px;
+  }
+  .philosophy-h2 strong { font-weight: 500; color: var(--gold); }
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .pillar {
+    background: var(--surface);
+    padding: clamp(28px, 4vw, 48px);
+    transition: background 0.3s;
+  }
+  .pillar:hover { background: var(--surface-2); }
+  .pillar-icon {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    color: var(--gold);
+  }
+  .pillar-num {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+  }
+  .pillar h3 {
+    font-family: var(--ff-serif);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .pillar p { font-size: 14px; color: var(--text-2); line-height: 1.7; }
+  .pillar-points {
+    list-style: none;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pillar-points li {
+    font-size: 13px;
+    color: var(--text-2);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .pillar-points li::before {
+    content: '→';
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ─── SERVICES ───────────────────────────────────────────────────── */
+  #services { background: var(--bg); }
+  .services-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 64px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .services-h2 {
+    font-family: var(--ff-serif);
+    font-size: clamp(32px, 4.5vw, 56px);
+    font-weight: 300;
+    line-height: 1.1;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .service-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: clamp(28px, 3vw, 40px);
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition: border-color 0.35s, transform 0.35s, box-shadow 0.35s;
+    display: flex;
+    flex-direction: column;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.35s;
+  }
+  .service-card:hover {
+    border-color: rgba(201,169,110,0.25);
+    transform: translateY(-4px);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  }
+  .service-card:hover::before { opacity: 1; }
+  .service-number {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 0.15em;
+    margin-bottom: 20px;
+  }
+  .service-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 24px;
+    color: var(--gold);
+  }
+  .service-title {
+    font-family: var(--ff-serif);
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .service-desc {
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.7;
+    margin-bottom: 28px;
+    flex: 1;
+  }
+  .service-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+  .service-list li {
+    font-size: 13px;
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .service-list li::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+
+  /* ─── PROCESS ────────────────────────────────────────────────────── */
+  #process { background: var(--surface); border-top: 1px solid var(--border); }
+  .process-h2 {
+    font-family: var(--ff-serif);
+    font-size: clamp(30px, 4vw, 50px);
+    font-weight: 300;
+    margin-bottom: 64px;
+    max-width: 540px;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    position: relative;
+  }
+  .steps::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: calc(12.5% + 20px);
+    right: calc(12.5% + 20px);
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--text-3) 100%);
+  }
+  .step {
+    padding: 0 16px 0 0;
+    position: relative;
+  }
+  .step-dot {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    font-family: var(--ff-mono);
+    font-size: 12px;
+    color: var(--gold);
+    transition: border-color 0.3s, background 0.3s;
+    position: relative;
+    z-index: 1;
+  }
+  .step:hover .step-dot {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+  }
+  .step-title {
+    font-family: var(--ff-serif);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .step-desc { font-size: 13px; color: var(--text-2); line-height: 1.7; }
+
+  /* ─── ROI BLOCK ──────────────────────────────────────────────────── */
+  #roi { background: var(--bg); position: relative; overflow: hidden; }
+  .roi-bg {
+    position: absolute;
+    bottom: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(59,130,246,0.04) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .roi-header { margin-bottom: 64px; }
+  .roi-h2 {
+    font-family: var(--ff-serif);
+    font-size: clamp(30px, 4vw, 50px);
+    font-weight: 300;
+    margin-bottom: 16px;
+  }
+  .roi-sub { font-size: 15px; color: var(--text-2); max-width: 480px; }
+  .roi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  .roi-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .roi-metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    transition: border-color 0.3s;
+  }
+  .roi-metric:hover { border-color: rgba(59,130,246,0.25); }
+  .roi-metric-left { flex: 1; }
+  .roi-metric-label { font-size: 12px; color: var(--text-3); margin-bottom: 4px; font-family: var(--ff-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+  .roi-metric-desc { font-size: 14px; color: var(--text-2); }
+  .roi-metric-value {
+    font-family: var(--ff-mono);
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--blue);
+    white-space: nowrap;
+  }
+  .roi-chart-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+  }
+  .chart-title {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .chart-subtitle { font-size: 20px; font-family: var(--ff-serif); color: var(--text); margin-bottom: 32px; }
+  .chart-area { width: 100%; height: 200px; position: relative; }
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 100%;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+  .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end; }
+  .bar {
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+    background: linear-gradient(to top, var(--blue) 0%, rgba(59,130,246,0.4) 100%);
+    transition: height 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    height: 0;
+    position: relative;
+  }
+  .bar.animated { height: var(--h); }
+  .bar-val {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    color: var(--text-2);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .bar-label { font-size: 10px; color: var(--text-3); font-family: var(--ff-mono); }
+  .roi-examples {
+    margin-top: 64px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .roi-example {
+    background: var(--surface);
+    padding: 32px;
+    transition: background 0.3s;
+  }
+  .roi-example:hover { background: var(--surface-2); }
+  .roi-ex-label { font-family: var(--ff-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+  .roi-ex-input { font-size: 14px; color: var(--text-2); margin-bottom: 8px; }
+  .roi-ex-arrow { font-family: var(--ff-mono); font-size: 11px; color: var(--text-3); margin-bottom: 8px; }
+  .roi-ex-result { font-family: var(--ff-mono); font-size: 22px; color: var(--green); }
+
+  /* ─── CASES ──────────────────────────────────────────────────────── */
+  #cases { background: var(--surface); border-top: 1px solid var(--border); }
+  .cases-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .cases-h2 {
+    font-family: var(--ff-serif);
+    font-size: clamp(30px, 4vw, 50px);
+    font-weight: 300;
+  }
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto auto;
+    gap: 20px;
+  }
+  .case-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: clamp(24px, 3vw, 40px);
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .case-card:hover { border-color: rgba(201,169,110,0.2); transform: translateY(-2px); }
+  .case-card.featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .case-tag {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 16px;
+  }
+  .case-title {
+    font-family: var(--ff-serif);
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .case-desc { font-size: 14px; color: var(--text-2); line-height: 1.7; margin-bottom: 28px; }
+  .case-flow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .case-flow-item {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 1.4;
+  }
+  .case-flow-arrow { color: var(--text-3); font-size: 16px; }
+  .case-metrics {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .case-metric { }
+  .case-metric-val {
+    font-family: var(--ff-mono);
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .case-metric-label { font-size: 11px; color: var(--text-3); }
+  .case-featured-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .mini-chart { }
+  .mini-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .mini-bar-label { font-size: 11px; color: var(--text-3); width: 64px; flex-shrink: 0; font-family: var(--ff-mono); }
+  .mini-bar-track { flex: 1; height: 4px; background: var(--surface-2); border-radius: 100px; overflow: hidden; }
+  .mini-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--blue) 0%, var(--gold) 100%);
+    width: 0;
+    transition: width 1.2s var(--ease);
+  }
+  .mini-bar-fill.animated { width: var(--w); }
+  .mini-bar-val { font-size: 11px; color: var(--text-2); font-family: var(--ff-mono); width: 36px; text-align: right; }
+
+  /* ─── FOR WHOM ────────────────────────────────────────────────────── */
+  #forwhom { background: var(--bg); }
+  .forwhom-h2 {
+    font-family: var(--ff-serif);
+    font-size: clamp(30px, 4vw, 50px);
+    font-weight: 300;
+    margin-bottom: 16px;
+  }
+  .forwhom-sub { font-size: 15px; color: var(--text-2); margin-bottom: 56px; max-width: 520px; }
+  .whom-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .whom-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 24px;
+    background: var(--surface);
+    transition: border-color 0.3s, background 0.3s;
+    cursor: default;
+  }
+  .whom-card:hover { border-color: rgba(201,169,110,0.25); background: var(--surface-2); }
+  .whom-icon { font-size: 28px; margin-bottom: 16px; display: block; }
+  .whom-title {
+    font-family: var(--ff-serif);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .whom-desc { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+
+  /* ─── ADVANTAGES ─────────────────────────────────────────────────── */
+  #advantages { background: var(--surface); border-top: 1px solid var(--border); }
+  .adv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 56px;
+  }
+  .adv-item {
+    background: var(--surface);
+    padding: 36px 32px;
+    transition: background 0.3s;
+  }
+  .adv-item:hover { background: var(--surface-2); }
+  .adv-num {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+  }
+  .adv-title {
+    font-family: var(--ff-serif);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .adv-desc { font-size: 13px; color: var(--text-2); line-height: 1.7; }
+
+  /* ─── CTA BANNER ─────────────────────────────────────────────────── */
+  #cta { background: var(--bg); }
+  .cta-inner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: clamp(48px, 7vw, 96px) clamp(32px, 6vw, 80px);
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .cta-glow {
+    position: absolute;
+    top: -60%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .cta-h2 {
+    font-family: var(--ff-serif);
+    font-size: clamp(32px, 4vw, 54px);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .cta-h2 em { font-style: italic; color: var(--gold); }
+  .cta-sub { font-size: 15px; color: var(--text-2); line-height: 1.7; }
+  .cta-form { position: relative; z-index: 2; }
+  .form-row { display: flex; flex-direction: column; gap: 12px; }
+  .form-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-family: var(--ff-sans);
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.25s;
+  }
+  .form-input::placeholder { color: var(--text-3); }
+  .form-input:focus { border-color: rgba(201,169,110,0.4); }
+  .form-select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-family: var(--ff-sans);
+    font-size: 14px;
+    color: var(--text-2);
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.25s;
+  }
+  .form-select:focus { border-color: rgba(201,169,110,0.4); }
+  .form-note { font-size: 11px; color: var(--text-3); margin-top: 8px; }
+  .btn-submit {
+    width: 100%;
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    background: var(--gold);
+    color: #0A0A0A;
+    font-family: var(--ff-sans);
+    letter-spacing: 0.02em;
+    transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+    margin-top: 4px;
+  }
+  .btn-submit:hover {
+    background: #D4B57C;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(201,169,110,0.3);
+  }
+
+  /* ─── FOOTER ─────────────────────────────────────────────────────── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 60px 0 40px;
+  }
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+  .footer-brand {}
+  .footer-logo {
+    font-family: var(--ff-mono);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--text);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 16px;
+  }
+  .footer-logo span { color: var(--gold); }
+  .footer-desc { font-size: 13px; color: var(--text-2); line-height: 1.7; max-width: 240px; }
+  .footer-col-title { font-size: 11px; font-family: var(--ff-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 20px; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .footer-links a { font-size: 13px; color: var(--text-2); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--text); }
+  .footer-contact { font-size: 13px; color: var(--text-2); }
+  .footer-contact a { color: var(--text-2); text-decoration: none; transition: color 0.2s; display: block; margin-bottom: 8px; }
+  .footer-contact a:hover { color: var(--gold); }
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-copy { font-size: 12px; color: var(--text-3); }
+  .footer-socials { display: flex; gap: 20px; }
+  .footer-socials a {
+    font-size: 12px;
+    font-family: var(--ff-mono);
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-socials a:hover { color: var(--gold); }
+
+  /* ─── RESPONSIVE ─────────────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .services-grid { grid-template-columns: 1fr 1fr; }
+    .steps { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    .steps::before { display: none; }
+    .roi-grid { grid-template-columns: 1fr; }
+    .whom-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    :root { --section-pad: 60px; }
+    .nav-links { display: none; }
+    .nav-cta { display: none; }
+    .burger { display: flex; }
+    .hero-stats { grid-template-columns: 1fr 1fr 1fr; }
+    .hero-stat { padding: 16px 18px; }
+    .pillars { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .roi-examples { grid-template-columns: 1fr; }
+    .cases-grid { grid-template-columns: 1fr; }
+    .case-card.featured { grid-column: 1; grid-template-columns: 1fr; }
+    .case-featured-visual { display: none; }
+    .whom-grid { grid-template-columns: 1fr 1fr; }
+    .adv-grid { grid-template-columns: 1fr; }
+    .cta-inner { grid-template-columns: 1fr; gap: 40px; }
+    .footer-inner { grid-template-columns: 1fr; gap: 36px; }
+    .services-header { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-stats { grid-template-columns: 1fr; }
+    .hero-stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .hero-stat:last-child { border-bottom: none; }
+    .whom-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor-glow"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">SCALE<span>X</span></a>
+      <ul class="nav-links">
+        <li><a href="#services">Услуги</a></li>
+        <li><a href="#cases">Кейсы</a></li>
+        <li><a href="#process">Подход</a></li>
+        <li><a href="#cta">Контакт</a></li>
+      </ul>
+      <a href="#cta" class="btn btn-outline nav-cta" style="padding:10px 20px;font-size:13px;">Обсудить проект</a>
+      <div class="burger" id="burger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#services" onclick="closeMenu()">Услуги</a>
+  <a href="#cases" onclick="closeMenu()">Кейсы</a>
+  <a href="#process" onclick="closeMenu()">Подход</a>
+  <a href="#cta" onclick="closeMenu()">Обсудить проект</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-tag reveal"><span class="tag">Масштабирование под ключ</span></div>
+      <h1 class="hero-h1 reveal" data-delay="1">
+        Мы строим<br>
+        системы,<br>
+        которые <em>зарабатывают.</em>
+      </h1>
+      <p class="hero-sub reveal" data-delay="2">
+        Стратегия. Разработка. Аналитика.<br>
+        Один партнёр — полный цикл роста вашего бизнеса.
+      </p>
+      <div class="hero-actions reveal" data-delay="3">
+        <a href="#cta" class="btn btn-primary">
+          Обсудить рост бизнеса
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h12M8 2l5 5-5 5"/></svg>
+        </a>
+        <a href="#cases" class="btn btn-ghost">Смотреть кейсы →</a>
+      </div>
+      <div class="hero-stats reveal" data-delay="4">
+        <div class="hero-stat">
+          <span class="stat-num counter" data-target="47"><span class="accent">0</span></span>
+          <div class="stat-label">проектов реализовано</div>
+        </div>
+        <div class="hero-stat">
+          <span class="stat-num">×<span class="accent counter" data-target="32" data-decimal="1">0</span></span>
+          <div class="stat-label">средний рост выручки</div>
+        </div>
+        <div class="hero-stat">
+          <span class="stat-num">$<span class="accent counter" data-target="28" data-suffix="M+">0</span></span>
+          <div class="stat-label">привлечено клиентам</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    <span>scroll</span>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PHILOSOPHY -->
+<section id="philosophy">
+  <div class="container">
+    <div class="philosophy-header reveal">
+      <div class="section-label">Философия</div>
+      <h2 class="philosophy-h2">
+        Большинство агентств берут деньги<br>за <strong>процесс</strong>. Мы берём за <strong>результат</strong>.
+      </h2>
+    </div>
+    <div class="pillars">
+      <div class="pillar reveal" data-delay="1">
+        <div class="pillar-num">01 / СТРАТЕГИЯ</div>
+        <div class="pillar-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3>Стратегия и партнёрства</h3>
+        <p>Видим рынок на два хода вперёд. Строим стратегии, которые работают вне зависимости от конъюнктуры.</p>
+        <ul class="pillar-points">
+          <li>Разработка стратегии роста и выхода на рынки</li>
+          <li>Построение партнёрств и коммерческих альянсов</li>
+          <li>Переговоры на уровне C-suite</li>
+          <li>Развитие деловых связей и нетворк</li>
+        </ul>
+      </div>
+      <div class="pillar reveal" data-delay="2">
+        <div class="pillar-num">02 / ТЕХНОЛОГИИ</div>
+        <div class="pillar-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8l3 3-3 3M13 14h4"/></svg>
+        </div>
+        <h3>IT-разработка</h3>
+        <p>Не сайты ради сайтов — системы, которые решают бизнес-задачи и генерируют выручку.</p>
+        <ul class="pillar-points">
+          <li>Разработка сайтов и платформ под ключ</li>
+          <li>Автоматизация процессов и рабочих потоков</li>
+          <li>Внедрение CRM, ERP, цифровых решений</li>
+          <li>Интеграции и API-разработка</li>
+        </ul>
+      </div>
+      <div class="pillar reveal" data-delay="3">
+        <div class="pillar-num">03 / АНАЛИТИКА</div>
+        <div class="pillar-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/></svg>
+        </div>
+        <h3>Бизнес-аналитика</h3>
+        <p>Управленческие решения на основе данных, а не интуиции. Цифры, которые показывают куда расти.</p>
+        <ul class="pillar-points">
+          <li>Анализ unit-экономики и финансовых потоков</li>
+          <li>Построение финансовых моделей и прогнозов</li>
+          <li>Оптимизация операционных процессов</li>
+          <li>KPI-системы и управленческий учёт</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="services-header">
+      <div>
+        <div class="section-label reveal">Услуги</div>
+        <h2 class="services-h2 reveal" data-delay="1">Три направления.<br>Один результат.</h2>
+      </div>
+      <a href="#cta" class="btn btn-ghost reveal" data-delay="2" style="flex-shrink:0;">Обсудить задачу →</a>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal" data-delay="1">
+        <div class="service-number">01</div>
+        <div class="service-icon">
+          <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2">
+            <circle cx="22" cy="22" r="18"/>
+            <path d="M22 8v14l8 8"/>
+            <circle cx="22" cy="22" r="3" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <div class="service-title">Стратегия и партнёрства</div>
+        <p class="service-desc">Разработка стратегии роста и выхода на новые рынки. Переговоры, партнёрства, развитие бизнеса на уровне первых лиц.</p>
+        <ul class="service-list">
+          <li>Стратегия роста и масштабирования</li>
+          <li>Go-to-market планирование</li>
+          <li>Переговоры и партнёрские сделки</li>
+          <li>Выход на новые рынки</li>
+          <li>Бизнес-девелопмент и нетворк</li>
+        </ul>
+      </div>
+      <div class="service-card reveal" data-delay="2">
+        <div class="service-number">02</div>
+        <div class="service-icon">
+          <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2">
+            <rect x="6" y="8" width="32" height="22" rx="3"/>
+            <path d="M14 38h16M22 30v8"/>
+            <path d="M13 16l4 4-4 4M23 24h8"/>
+          </svg>
+        </div>
+        <div class="service-title">Технологии и разработка</div>
+        <p class="service-desc">Создаём цифровые продукты, которые автоматизируют процессы, снижают издержки и открывают новые каналы выручки.</p>
+        <ul class="service-list">
+          <li>Разработка сайтов и платформ</li>
+          <li>Автоматизация бизнес-процессов</li>
+          <li>Внедрение CRM и ERP систем</li>
+          <li>Телеграм-боты и интеграции</li>
+          <li>Аналитические дашборды</li>
+        </ul>
+      </div>
+      <div class="service-card reveal" data-delay="3">
+        <div class="service-number">03</div>
+        <div class="service-icon">
+          <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path d="M6 38V28l8-8 8 6 8-14 8 10"/>
+            <path d="M6 38h32"/>
+          </svg>
+        </div>
+        <div class="service-title">Бизнес-аналитика</div>
+        <p class="service-desc">Превращаем данные в управленческие решения. Финансовые модели, unit-экономика и системы KPI для кратного роста.</p>
+        <ul class="service-list">
+          <li>Финансовые модели и прогнозы</li>
+          <li>Анализ unit-экономики</li>
+          <li>Оптимизация операционных процессов</li>
+          <li>Управленческая отчётность</li>
+          <li>Инвестиционный анализ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="container">
+    <div class="section-label reveal">Подход</div>
+    <h2 class="process-h2 reveal" data-delay="1">От диагностики до<br>измеримого результата.</h2>
+    <div class="steps">
+      <div class="step reveal" data-delay="1">
+        <div class="step-dot">01</div>
+        <div class="step-title">Диагностика</div>
+        <p class="step-desc">Глубокое погружение в бизнес: цифры, процессы, рынок, точки роста и узкие места. Без шаблонов — только ваша специфика.</p>
+      </div>
+      <div class="step reveal" data-delay="2">
+        <div class="step-dot">02</div>
+        <div class="step-title">Стратегия</div>
+        <p class="step-desc">Детальный план с конкретными целями, метриками и приоритетами. Согласовываем каждый шаг перед реализацией.</p>
+      </div>
+      <div class="step reveal" data-delay="3">
+        <div class="step-dot">03</div>
+        <div class="step-title">Разработка и внедрение</div>
+        <p class="step-desc">Реализуем технологическую и операционную часть. Контролируем каждый этап, докладываем по ключевым метрикам.</p>
+      </div>
+      <div class="step reveal" data-delay="4">
+        <div class="step-dot">04</div>
+        <div class="step-title">Рост и сопровождение</div>
+        <p class="step-desc">Не уходим после запуска. Мониторим результат, масштабируем работающее, быстро корректируем курс.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI -->
+<section id="roi">
+  <div class="roi-bg"></div>
+  <div class="container">
+    <div class="roi-header">
+      <div class="section-label reveal">Экономика</div>
+      <h2 class="roi-h2 reveal" data-delay="1">Как мы зарабатываем<br>вам деньги</h2>
+      <p class="roi-sub reveal" data-delay="2">Каждое решение обосновано цифрами. Вот как выглядит типичный ROI от работы с нами.</p>
+    </div>
+    <div class="roi-grid">
+      <div class="roi-metrics reveal-left">
+        <div class="roi-metric">
+          <div class="roi-metric-left">
+            <div class="roi-metric-label">Среднее увеличение выручки</div>
+            <div class="roi-metric-desc">За первые 12 месяцев после внедрения стратегии</div>
+          </div>
+          <div class="roi-metric-value">+187%</div>
+        </div>
+        <div class="roi-metric">
+          <div class="roi-metric-left">
+            <div class="roi-metric-label">Снижение операционных издержек</div>
+            <div class="roi-metric-desc">За счёт автоматизации и оптимизации процессов</div>
+          </div>
+          <div class="roi-metric-value">−34%</div>
+        </div>
+        <div class="roi-metric">
+          <div class="roi-metric-left">
+            <div class="roi-metric-label">Возврат инвестиций (ROI)</div>
+            <div class="roi-metric-desc">Средний показатель по реализованным проектам</div>
+          </div>
+          <div class="roi-metric-value">×4.2</div>
+        </div>
+        <div class="roi-metric">
+          <div class="roi-metric-left">
+            <div class="roi-metric-label">Срок окупаемости</div>
+            <div class="roi-metric-desc">От старта работы до выхода на положительный денежный поток</div>
+          </div>
+          <div class="roi-metric-value">3–6 мес</div>
+        </div>
+      </div>
+      <div class="roi-chart-wrap reveal-right">
+        <div class="chart-title">Динамика роста выручки</div>
+        <div class="chart-subtitle">Среднее по портфелю клиентов</div>
+        <div class="chart-area">
+          <div class="chart-bars" id="chartBars">
+            <div class="bar-wrap">
+              <div class="bar" style="--h:22%" data-val="1.0x"><div class="bar-val">1.0×</div></div>
+              <div class="bar-label">Q1</div>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar" style="--h:38%" data-val="1.4x"><div class="bar-val">1.4×</div></div>
+              <div class="bar-label">Q2</div>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar" style="--h:54%" data-val="1.9x"><div class="bar-val">1.9×</div></div>
+              <div class="bar-label">Q3</div>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar" style="--h:68%" data-val="2.4x"><div class="bar-val">2.4×</div></div>
+              <div class="bar-label">Q4</div>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar" style="--h:80%" data-val="2.9x"><div class="bar-val">2.9×</div></div>
+              <div class="bar-label">Q5</div>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar" style="--h:92%" data-val="3.2x"><div class="bar-val">3.2×</div></div>
+              <div class="bar-label">Q6</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="roi-examples">
+      <div class="roi-example reveal" data-delay="1">
+        <div class="roi-ex-label">Кейс: автоматизация</div>
+        <div class="roi-ex-input">Инвестиция в разработку: 800 000 ₽</div>
+        <div class="roi-ex-arrow">↓ экономия на 3 штатных единицах</div>
+        <div class="roi-ex-result">+3.6M ₽/год</div>
+      </div>
+      <div class="roi-example reveal" data-delay="2">
+        <div class="roi-ex-label">Кейс: стратегия выхода</div>
+        <div class="roi-ex-input">6 недель аналитики и планирования</div>
+        <div class="roi-ex-arrow">↓ выход на 2 новых рынка</div>
+        <div class="roi-ex-result">+$420K выручка</div>
+      </div>
+      <div class="roi-example reveal" data-delay="3">
+        <div class="roi-ex-label">Кейс: финансовая модель</div>
+        <div class="roi-ex-input">Убыточная операционная модель</div>
+        <div class="roi-ex-arrow">↓ реструктуризация юнит-экономики</div>
+        <div class="roi-ex-result">EBITDA +34%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CASES -->
+<section id="cases">
+  <div class="container">
+    <div class="cases-header">
+      <div>
+        <div class="section-label reveal">Кейсы</div>
+        <h2 class="cases-h2 reveal" data-delay="1">Было → Сделали → Стало</h2>
+      </div>
+    </div>
+    <div class="cases-grid">
+
+      <!-- FEATURED CASE -->
+      <div class="case-card featured reveal">
+        <div>
+          <div class="case-tag">E-commerce / Ритейл</div>
+          <h3 class="case-title">Рост выручки интернет-магазина в 2.8× за 6 месяцев</h3>
+          <p class="case-desc">Производитель одежды с оборотом 18M ₽/год. Хаотичная логистика, нет аналитики, конверсия 0.8%. Перестроили всю операционную модель и запустили новый сайт с аналитикой.</p>
+          <div class="case-flow">
+            <div class="case-flow-item">Оборот 18M ₽/год</div>
+            <div class="case-flow-arrow">→</div>
+            <div class="case-flow-item">Новый сайт + CRM + аналитика + SEO</div>
+            <div class="case-flow-arrow">→</div>
+            <div class="case-flow-item">Оборот 50M ₽/год</div>
+          </div>
+          <div class="case-metrics">
+            <div class="case-metric">
+              <span class="case-metric-val">×2.8</span>
+              <span class="case-metric-label">рост выручки</span>
+            </div>
+            <div class="case-metric">
+              <span class="case-metric-val">3.1%</span>
+              <span class="case-metric-label">конверсия (было 0.8%)</span>
+            </div>
+            <div class="case-metric">
+              <span class="case-metric-val">6 мес</span>
+              <span class="case-metric-label">срок реализации</span>
+            </div>
+          </div>
+        </div>
+        <div class="case-featured-visual">
+          <div class="chart-title" style="margin-bottom:20px;">Динамика оборота (M ₽)</div>
+          <div class="mini-chart">
+            <div class="mini-bar-row" style="margin-bottom:12px;">
+              <div class="mini-bar-label">До</div>
+              <div class="mini-bar-track"><div class="mini-bar-fill" style="--w:32%" data-animate-bar></div></div>
+              <div class="mini-bar-val">18M</div>
+            </div>
+            <div class="mini-bar-row" style="margin-bottom:12px;">
+              <div class="mini-bar-label">M3</div>
+              <div class="mini-bar-track"><div class="mini-bar-fill" style="--w:52%" data-animate-bar></div></div>
+              <div class="mini-bar-val">29M</div>
+            </div>
+            <div class="mini-bar-row" style="margin-bottom:12px;">
+              <div class="mini-bar-label">M6</div>
+              <div class="mini-bar-track"><div class="mini-bar-fill" style="--w:90%" data-animate-bar></div></div>
+              <div class="mini-bar-val">50M</div>
+            </div>
+          </div>
+          <div style="margin-top:28px;padding:20px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;">
+            <div style="font-family:var(--ff-mono);font-size:10px;color:var(--text-3);margin-bottom:8px;">КОМАНДА КЛИЕНТА</div>
+            <div style="font-size:13px;color:var(--text-2);line-height:1.6;">"Мы думали, что проблема в рекламе. Оказалось — в операционке. SCALEX нашли это за первую неделю."</div>
+            <div style="font-size:12px;color:var(--text-3);margin-top:10px;">— Директор по маркетингу</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE 2 -->
+      <div class="case-card reveal" data-delay="1">
+        <div class="case-tag">B2B SaaS / Автоматизация</div>
+        <h3 class="case-title">Автоматизация операций → −40% издержки, +$180K ARR</h3>
+        <p class="case-desc">SaaS-компания с ручными процессами onboarding и биллинга. Разработали интеграции с CRM и автоматизировали 80% рутинных операций.</p>
+        <div class="case-flow">
+          <div class="case-flow-item">8 ручных процессов</div>
+          <div class="case-flow-arrow">→</div>
+          <div class="case-flow-item">Автоматизация + интеграции</div>
+          <div class="case-flow-arrow">→</div>
+          <div class="case-flow-item">2 FTE высвобождено</div>
+        </div>
+        <div class="case-metrics">
+          <div class="case-metric">
+            <span class="case-metric-val">−40%</span>
+            <span class="case-metric-label">операционные затраты</span>
+          </div>
+          <div class="case-metric">
+            <span class="case-metric-val">+$180K</span>
+            <span class="case-metric-label">ARR прирост</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE 3 -->
+      <div class="case-card reveal" data-delay="2">
+        <div class="case-tag">Производство / Финансы</div>
+        <h3 class="case-title">Финансовая модель + ERP → EBITDA +34%</h3>
+        <p class="case-desc">Производственная компания без управленческого учёта. Внедрили финансовую модель, настроили ERP, выявили убыточные продуктовые линейки.</p>
+        <div class="case-flow">
+          <div class="case-flow-item">EBITDA 8%</div>
+          <div class="case-flow-arrow">→</div>
+          <div class="case-flow-item">Финмодель + ERP</div>
+          <div class="case-flow-arrow">→</div>
+          <div class="case-flow-item">EBITDA 21%</div>
+        </div>
+        <div class="case-metrics">
+          <div class="case-metric">
+            <span class="case-metric-val">+34%</span>
+            <span class="case-metric-label">рост EBITDA</span>
+          </div>
+          <div class="case-metric">
+            <span class="case-metric-val">4 мес</span>
+            <span class="case-metric-label">срок внедрения</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE 4 -->
+      <div class="case-card reveal" data-delay="1">
+        <div class="case-tag">Ритейл / Стратегия</div>
+        <h3 class="case-title">Стратегия масштабирования → 3 новых рынка за год</h3>
+        <p class="case-desc">Региональный ритейлер с планами экспансии, но без чёткой стратегии выхода. Разработали go-to-market план, провели переговоры с партнёрами.</p>
+        <div class="case-flow">
+          <div class="case-flow-item">1 регион</div>
+          <div class="case-flow-arrow">→</div>
+          <div class="case-flow-item">GTM стратегия + переговоры</div>
+          <div class="case-flow-arrow">→</div>
+          <div class="case-flow-item">4 региона</div>
+        </div>
+        <div class="case-metrics">
+          <div class="case-metric">
+            <span class="case-metric-val">×2.2</span>
+            <span class="case-metric-label">рост выручки</span>
+          </div>
+          <div class="case-metric">
+            <span class="case-metric-val">3 рынка</span>
+            <span class="case-metric-label">новых за 12 мес</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE 5 -->
+      <div class="case-card reveal" data-delay="2">
+        <div class="case-tag">Логистика / Оптимизация</div>
+        <h3 class="case-title">Оптимизация логистики → −22% операционных расходов</h3>
+        <p class="case-desc">Логистическая компания с раздутым штатом и неэффективными маршрутами. Провели аудит, перестроили маршрутную сетку и внедрили систему мониторинга.</p>
+        <div class="case-flow">
+          <div class="case-flow-item">Операционные расходы X</div>
+          <div class="case-flow-arrow">→</div>
+          <div class="case-flow-item">Аудит + оптимизация</div>
+          <div class="case-flow-arrow">→</div>
+          <div class="case-flow-item">Расходы 0.78X</div>
+        </div>
+        <div class="case-metrics">
+          <div class="case-metric">
+            <span class="case-metric-val">−22%</span>
+            <span class="case-metric-label">операционные расходы</span>
+          </div>
+          <div class="case-metric">
+            <span class="case-metric-val">6 нед</span>
+            <span class="case-metric-label">срок проекта</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOR WHOM -->
+<section id="forwhom">
+  <div class="container">
+    <div class="section-label reveal">Аудитория</div>
+    <h2 class="forwhom-h2 reveal" data-delay="1">Работаем с теми,<br>кто думает в масштабе.</h2>
+    <p class="forwhom-sub reveal" data-delay="2">Нам интересны задачи, где ставки высоки и где нужен партнёр, а не подрядчик.</p>
+    <div class="whom-grid">
+      <div class="whom-card reveal" data-delay="1">
+        <span class="whom-icon">◈</span>
+        <div class="whom-title">Фаундеры</div>
+        <p class="whom-desc">Стартапы и растущие компании, которым нужна стратегия и технологии для кратного роста без раздувания штата.</p>
+      </div>
+      <div class="whom-card reveal" data-delay="2">
+        <span class="whom-icon">◇</span>
+        <div class="whom-title">Собственники</div>
+        <p class="whom-desc">Действующий бизнес с выручкой от 30M ₽, который упёрся в потолок и ищет системный выход на следующий уровень.</p>
+      </div>
+      <div class="whom-card reveal" data-delay="3">
+        <span class="whom-icon">△</span>
+        <div class="whom-title">Инвесторы</div>
+        <p class="whom-desc">Портфельные компании, которым нужна операционная экспертиза для повышения стоимости актива перед выходом.</p>
+      </div>
+      <div class="whom-card reveal" data-delay="4">
+        <span class="whom-icon">○</span>
+        <div class="whom-title">Топ-менеджеры</div>
+        <p class="whom-desc">Руководители, отвечающие за трансформацию или цифровизацию. Ищут надёжного партнёра, а не команду исполнителей.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADVANTAGES -->
+<section id="advantages">
+  <div class="container">
+    <div class="section-label reveal">Почему мы</div>
+    <h2 class="reveal" data-delay="1" style="font-family:var(--ff-serif);font-size:clamp(30px,4vw,50px);font-weight:300;max-width:500px;">Шесть причин работать с SCALEX</h2>
+    <div class="adv-grid">
+      <div class="adv-item reveal" data-delay="1">
+        <div class="adv-num">01</div>
+        <div class="adv-title">Полный цикл</div>
+        <p class="adv-desc">От стратегии до разработки до аналитики — один партнёр. Не нужно координировать трёх подрядчиков. Не нужно объяснять контекст каждому заново.</p>
+      </div>
+      <div class="adv-item reveal" data-delay="2">
+        <div class="adv-num">02</div>
+        <div class="adv-title">Один договор</div>
+        <p class="adv-desc">Один контрагент, один KPI, одна ответственность. Никакой размытости — результат зафиксирован до старта работ.</p>
+      </div>
+      <div class="adv-item reveal" data-delay="3">
+        <div class="adv-num">03</div>
+        <div class="adv-title">Результат в цифрах</div>
+        <p class="adv-desc">Каждое решение обосновано данными. Каждый этап — с измеримыми метриками. Никаких отчётов ради отчётов.</p>
+      </div>
+      <div class="adv-item reveal" data-delay="1">
+        <div class="adv-num">04</div>
+        <div class="adv-title">Полная конфиденциальность</div>
+        <p class="adv-desc">NDA на старте. Никакого публичного упоминания без вашего согласия. Внутренняя информация остаётся внутри.</p>
+      </div>
+      <div class="adv-item reveal" data-delay="2">
+        <div class="adv-num">05</div>
+        <div class="adv-title">Команда с опытом</div>
+        <p class="adv-desc">За плечами — проекты в e-commerce, SaaS, производстве, ритейле и логистике. Не учимся на вас — применяем проверенные паттерны.</p>
+      </div>
+      <div class="adv-item reveal" data-delay="3">
+        <div class="adv-num">06</div>
+        <div class="adv-title">Гибкий формат</div>
+        <p class="adv-desc">Проектная работа, ретейнер или стратегический партнёр — выбираете формат под задачу. Входной порог — конкретная задача, не бюджет.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <div class="cta-inner reveal">
+      <div class="cta-glow"></div>
+      <div>
+        <div class="section-label" style="margin-bottom:24px;">Начать</div>
+        <h2 class="cta-h2">Готовы к<br><em>кратному росту?</em></h2>
+        <p class="cta-sub" style="margin-top:20px;">Расскажите о задаче. Первая встреча — бесплатно. Без презентаций ни о чём — только предметный разговор о вашем бизнесе.</p>
+        <div style="margin-top:36px;display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text-2);">
+            <span style="color:var(--gold);font-family:var(--ff-mono);">✓</span>
+            Ответим в течение 4 часов в рабочий день
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text-2);">
+            <span style="color:var(--gold);font-family:var(--ff-mono);">✓</span>
+            Первый разбор задачи — бесплатно
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text-2);">
+            <span style="color:var(--gold);font-family:var(--ff-mono);">✓</span>
+            NDA подписываем на старте
+          </div>
+        </div>
+      </div>
+      <div class="cta-form">
+        <form onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <input class="form-input" type="text" placeholder="Ваше имя" required>
+            <input class="form-input" type="tel" placeholder="Телефон или Telegram">
+            <input class="form-input" type="email" placeholder="Email" required>
+            <select class="form-select">
+              <option value="" disabled selected>Направление запроса</option>
+              <option>Стратегия и рост бизнеса</option>
+              <option>IT-разработка и автоматизация</option>
+              <option>Бизнес-аналитика и финансы</option>
+              <option>Комплексный проект</option>
+            </select>
+            <textarea class="form-input" rows="3" placeholder="Коротко о задаче (необязательно)" style="resize:vertical;"></textarea>
+            <button type="submit" class="btn-submit">Отправить запрос →</button>
+          </div>
+          <p class="form-note">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности. Данные защищены.</p>
+        </form>
+        <div id="formSuccess" style="display:none;text-align:center;padding:40px 20px;">
+          <div style="font-family:var(--ff-mono);font-size:12px;color:var(--gold);letter-spacing:0.1em;margin-bottom:12px;">// ЗАПРОС ОТПРАВЛЕН</div>
+          <div style="font-family:var(--ff-serif);font-size:28px;color:var(--text);margin-bottom:12px;">Получили.</div>
+          <div style="font-size:14px;color:var(--text-2);">Свяжемся в течение 4 часов.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="footer-logo">SCALE<span>X</span></a>
+        <p class="footer-desc">Масштабирование бизнеса под ключ. Стратегия, разработка и аналитика — один партнёр, полный цикл роста.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Услуги</div>
+        <ul class="footer-links">
+          <li><a href="#services">Стратегия и партнёрства</a></li>
+          <li><a href="#services">IT-разработка</a></li>
+          <li><a href="#services">Бизнес-аналитика</a></li>
+          <li><a href="#process">Как мы работаем</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Компания</div>
+        <ul class="footer-links">
+          <li><a href="#philosophy">О нас</a></li>
+          <li><a href="#cases">Кейсы</a></li>
+          <li><a href="#forwhom">Для кого</a></li>
+          <li><a href="#cta">Контакт</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Контакты</div>
+        <div class="footer-contact">
+          <a href="mailto:hello@scalex.ru">hello@scalex.ru</a>
+          <a href="https://t.me/scalex">Telegram: @scalex</a>
+          <span style="color:var(--text-3);font-size:12px;display:block;margin-top:8px;">Москва, Россия</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 SCALEX. Все права защищены.</div>
+      <div class="footer-socials">
+        <a href="#">Telegram</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">VC.ru</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ─── CURSOR GLOW ──────────────────────────────────────────────────
+  const cursorGlow = document.getElementById('cursor-glow');
+  let mouseX = 0, mouseY = 0;
+  let glowX = 0, glowY = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function animateGlow() {
+    glowX += (mouseX - glowX) * 0.08;
+    glowY += (mouseY - glowY) * 0.08;
+    cursorGlow.style.left = glowX + 'px';
+    cursorGlow.style.top = glowY + 'px';
+    requestAnimationFrame(animateGlow);
+  }
+  if (window.matchMedia('(pointer: fine)').matches) {
+    animateGlow();
+  } else {
+    cursorGlow.style.display = 'none';
+  }
+
+  // ─── NAV SCROLL ────────────────────────────────────────────────────
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // ─── MOBILE MENU ─────────────���────────────────────────────────────
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+  function closeMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+  }
+
+  // ─── SCROLL REVEAL ─────────────────────────────────────────────────
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  // ─── NUMBER COUNTERS ────────────────────────────────────────────────
+  function animateCounter(el) {
+    const target = parseFloat(el.dataset.target);
+    const isDecimal = el.dataset.decimal;
+    const suffix = el.dataset.suffix || '';
+    const duration = 1800;
+    const start = performance.now();
+
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      let value = target * eased;
+
+      if (isDecimal) {
+        el.textContent = (value / 10).toFixed(1) + suffix;
+      } else {
+        el.textContent = Math.round(value) + suffix;
+      }
+
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  const counters = document.querySelectorAll('.counter');
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        counterObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(c => counterObserver.observe(c));
+
+  // ─── CHART BARS ─────────────────────────────────────────────────────
+  const bars = document.querySelectorAll('.bar');
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animated');
+        barObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  bars.forEach((bar, i) => {
+    bar.style.transitionDelay = (i * 0.1) + 's';
+    barObserver.observe(bar);
+  });
+
+  // ─── MINI BARS ──────────────────────────────────────────────────────
+  const miniBars = document.querySelectorAll('.mini-bar-fill');
+  const miniBarObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animated');
+        miniBarObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  miniBars.forEach((bar, i) => {
+    bar.style.transitionDelay = (i * 0.15 + 0.3) + 's';
+    miniBarObserver.observe(bar);
+  });
+
+  // ─── FORM SUBMIT ────────────────────────────────────────────────────
+  function handleSubmit(e) {
+    e.preventDefault();
+    e.target.style.display = 'none';
+    document.getElementById('formSuccess').style.display = 'block';
+  }
+
+  // ─── SMOOTH ACTIVE NAV ──────────────────────────────────────────────
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 100;
+      if (window.scrollY >= sectionTop) current = section.getAttribute('id');
+    });
+    navLinks.forEach(link => {
+      link.style.color = link.getAttribute('href') === '#' + current
+        ? 'var(--text)'
+        : '';
+    });
+  });
+</script>
+</body>
+</html>
