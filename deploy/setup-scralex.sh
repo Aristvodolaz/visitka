@@ -21,8 +21,24 @@ if command -v node >/dev/null 2>&1; then
 elif command -v nodejs >/dev/null 2>&1; then
   NODE_BIN="nodejs"
 else
-  echo "Node.js is not installed. Install Node.js 20+ first."
-  exit 1
+  echo "==> Node.js not found, installing Node.js 20"
+  apt install -y ca-certificates curl gnupg
+  mkdir -p /etc/apt/keyrings
+  curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+    | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+  echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" \
+    > /etc/apt/sources.list.d/nodesource.list
+  apt update
+  apt install -y nodejs
+
+  if command -v node >/dev/null 2>&1; then
+    NODE_BIN="node"
+  elif command -v nodejs >/dev/null 2>&1; then
+    NODE_BIN="nodejs"
+  else
+    echo "Failed to install Node.js automatically."
+    exit 1
+  fi
 fi
 
 if ! command -v pm2 >/dev/null 2>&1; then
