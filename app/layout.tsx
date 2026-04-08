@@ -5,6 +5,11 @@ import Providers from '@/components/Providers'
 export const metadata: Metadata = {
   title: 'SCRALEX — Масштабирование бизнеса под ключ',
   description: 'Стратегия. Разработка. Аналитика. Один партнёр — полный цикл роста вашего бизнеса.',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
