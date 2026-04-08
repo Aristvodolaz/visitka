@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'scralex',
-      cwd: '/var/www/scralex',
+      cwd: process.env.APP_DIR || '/var/www/scralex',
       script: 'npm',
       args: 'start',
       env: {
