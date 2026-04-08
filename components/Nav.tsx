@@ -47,7 +47,7 @@ export default function Nav() {
       <div className={`nav-topbar ${topbarHidden ? 'hide' : ''}`}>
         <div className="container">
           <div className="nav-topbar-inner">
-            <span className="nav-topbar-tag">SCALEX</span>
+            <span className="nav-topbar-tag">SCRALEX</span>
             <div className="nav-topbar-links">
               <a href="mailto:otsnata82@gmail.com" className="nav-topbar-link">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

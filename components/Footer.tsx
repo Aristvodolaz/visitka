@@ -39,7 +39,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p className="footer-copy">© {year} SCALEX. {t.footer.rights}</p>
+          <p className="footer-copy">© {year} SCRALEX. {t.footer.rights}</p>
           <div className="footer-socials">
             <a href="tel:+79199031597">{t.footer.call}</a>
             <a href="mailto:otsnata82@gmail.com">{t.footer.write}</a>

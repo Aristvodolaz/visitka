@@ -3,7 +3,7 @@ import './globals.css'
 import Providers from '@/components/Providers'
 
 export const metadata: Metadata = {
-  title: 'SCALEX — Масштабирование бизнеса под ключ',
+  title: 'SCRALEX — Масштабирование бизнеса под ключ',
   description: 'Стратегия. Разработка. Аналитика. Один партнёр — полный цикл роста вашего бизнеса.',
 }
 

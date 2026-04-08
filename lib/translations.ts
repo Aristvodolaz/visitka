@@ -197,7 +197,7 @@ const ru = {
   },
   advantages: {
     sectionLabel: 'Почему мы',
-    h2: 'Шесть причин\nработать с SCALEX',
+    h2: 'Шесть причин\nработать с SCRALEX',
     items: [
       { num: '01', title: 'Полный цикл', desc: 'От стратегии до разработки до аналитики — один партнёр. Не нужно координировать трёх подрядчиков и объяснять контекст каждому заново.' },
       { num: '02', title: 'Один договор', desc: 'Один контрагент, один KPI, одна ответственность. Никакой размытости — результат зафиксирован до старта работ.' },
@@ -447,7 +447,7 @@ const en: typeof ru = {
   },
   advantages: {
     sectionLabel: 'Why us',
-    h2: 'Six reasons\nto work with SCALEX',
+    h2: 'Six reasons\nto work with SCRALEX',
     items: [
       { num: '01', title: 'Full cycle', desc: 'From strategy to development to analytics — one partner. No need to coordinate three vendors and re-explain context each time.' },
       { num: '02', title: 'One contract', desc: 'One counterparty, one KPI, one accountability. No ambiguity — results are fixed before work begins.' },
