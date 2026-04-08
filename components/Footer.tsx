@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer-inner">
           <div>
-            <a href="#" className="footer-logo">SCALE<span>X</span></a>
+            <a href="#" className="footer-logo">SCRALE<span>X</span></a>
             <p className="footer-desc">{t.footer.desc}</p>
           </div>
           <div>

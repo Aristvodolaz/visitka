@@ -72,7 +72,7 @@ export default function Nav() {
           <div className="nav-inner">
             <a href="#" className="nav-logo">
               <span className="nav-logo-mark">S</span>
-              SCALE<span>X</span>
+              SCRALE<span>X</span>
             </a>
 
             <ul className="nav-links">
