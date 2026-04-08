@@ -23,6 +23,10 @@ elif command -v nodejs >/dev/null 2>&1; then
 else
   echo "==> Node.js not found, installing Node.js 20"
   apt install -y ca-certificates curl gnupg
+  # Clean old NodeSource entries to avoid signed-by conflicts.
+  rm -f /etc/apt/sources.list.d/nodesource.list
+  rm -f /etc/apt/sources.list.d/nodesource*.list
+  sed -i '/deb\.nodesource\.com\/node_20\.x/d' /etc/apt/sources.list 2>/dev/null || true
   mkdir -p /etc/apt/keyrings
   curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
     | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
