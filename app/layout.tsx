@@ -5,6 +5,39 @@ import Providers from '@/components/Providers'
 export const metadata: Metadata = {
   title: 'SCRALEX — Масштабирование бизнеса под ключ',
   description: 'Стратегия. Разработка. Аналитика. Один партнёр — полный цикл роста вашего бизнеса.',
+  keywords: ['масштабирование бизнеса', 'бизнес-стратегия', 'разработка', 'аналитика', 'рост бизнеса', 'SCRALEX', 'консалтинг'],
+  authors: [{ name: 'SCRALEX' }],
+  creator: 'SCRALEX',
+  publisher: 'SCRALEX',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    title: 'SCRALEX — Масштабирование бизнеса под ключ',
+    description: 'Стратегия. Разработка. Аналитика. Один партнёр — полный цикл роста вашего бизнеса.',
+    url: 'https://scralex.ru',
+    siteName: 'SCRALEX',
+    locale: 'ru_RU',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SCRALEX — Масштабирование бизнеса под ключ',
+    description: 'Стратегия. Разработка. Аналитика. Один партнёр — полный цикл роста вашего бизнеса.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: '/icon.svg',
     shortcut: '/icon.svg',
