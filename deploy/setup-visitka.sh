@@ -17,8 +17,8 @@ PORT=3200
 echo "==> APP_DIR: $APP_DIR (порт $PORT)"
 cd "$APP_DIR"
 
-if ! command -v node >/dev/null 2>&1; then
-  echo "==> Ставлю Node.js 20"
+if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+  echo "==> Ставлю Node.js 20 (node/npm не найдены)"
   apt-get update
   apt-get install -y ca-certificates curl gnupg
   mkdir -p /etc/apt/keyrings
